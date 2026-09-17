@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QA 知识库</title>
+<!-- qa-archive:v1 -->
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f6f7f9; --surface: #fff; --soft: #f0f3f5; --ink: #202d3d;
+    --muted: #637084; --line: #e1e7ec; --accent: #126e66;
+    --accent-soft: #e9f4f0; --accent-line: #b9d9d1; --mark: #fce5a1;
+    --shadow: 0 8px 30px rgba(31, 48, 65, .035);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #11191f; --surface: #19232c; --soft: #202d38; --ink: #e6edf3;
+      --muted: #a3b2c2; --line: #2c3b47; --accent: #83d5c5;
+      --accent-soft: #203b38; --accent-line: #416b63; --mark: #6d5420;
+      --shadow: 0 8px 30px rgba(0, 0, 0, .12);
+    }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  button, input, select { font: inherit; }
+  button, select { cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+  ::selection { background: var(--accent-line); color: var(--ink); }
+  .wrap { width: min(1160px, calc(100% - 64px)); margin-inline: auto; }
+  .site-header { border-bottom: 1px solid var(--line); background: var(--surface); }
+  .nav { min-height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .brand { display: inline-flex; align-items: center; gap: 12px; font-size: 1rem; font-weight: 750; letter-spacing: .02em; }
+  .brand-icon {
+    display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px;
+    background: var(--accent); color: var(--surface); font: 750 14px "Segoe UI", sans-serif;
+    letter-spacing: -.04em;
+  }
+  .local-badge { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: .78rem; }
+  .local-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 36px; padding: 54px 0 36px; }
+  .eyebrow { margin: 0 0 12px; color: var(--accent); font-size: .7rem; font-weight: 750; letter-spacing: .18em; }
+  h1 { margin: 0; font-size: clamp(2rem, 3.3vw, 2.8rem); line-height: 1.3; letter-spacing: -.045em; font-weight: 750; text-wrap: balance; }
+  .hero-copy { margin: 15px 0 0; color: var(--muted); font-size: .93rem; }
+  .overview { display: flex; flex-shrink: 0; gap: 30px; margin: 0 0 3px; }
+  .overview div + div { border-left: 1px solid var(--line); padding-left: 30px; }
+  .overview dt { color: var(--muted); font-size: .75rem; }
+  .overview dd { margin: 2px 0 0; font-size: 2rem; font-weight: 650; font-variant-numeric: tabular-nums; letter-spacing: -.04em; line-height: 1.3; }
+  .search-panel { background: var(--surface); padding: 22px 24px 17px; border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); }
+  .search-controls { display: flex; gap: 12px; }
+  .search-box { position: relative; flex: 1; min-width: 0; }
+  .search-icon { position: absolute; top: 18px; left: 17px; width: 19px; height: 19px; color: var(--muted); pointer-events: none; }
+  #q {
+    width: 100%; min-height: 56px; padding: 12px 16px 12px 48px; border: 1px solid var(--line);
+    border-radius: 11px; background: var(--bg); color: var(--ink); font-size: .95rem;
+    transition: border-color .18s, box-shadow .18s;
+  }
+  #q::placeholder { color: var(--muted); opacity: 1; }
+  #q:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  select {
+    width: 210px; max-width: 100%; min-height: 56px; padding: 12px 34px 12px 16px;
+    color: var(--ink); background: var(--surface); border: 1px solid var(--line);
+    border-radius: 11px; font-size: .87rem; text-overflow: ellipsis;
+  }
+  .search-help { margin: 11px 0 0; color: var(--muted); font-size: .74rem; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+  .results-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 30px 0 17px; }
+  .results-heading { margin: 0; font-size: .98rem; font-weight: 700; }
+  .results-heading span { margin-left: 12px; color: var(--muted); font-size: .77rem; font-weight: 400; }
+  .results-status { display: flex; align-items: center; gap: 14px; }
+  #stats { color: var(--muted); font-size: .78rem; }
+  #reset { padding: 4px 0; border: 0; background: transparent; color: var(--accent); font-size: .78rem; text-decoration: underline; text-underline-offset: 4px; }
+  #results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .card {
+    min-width: 0; display: flex; flex-direction: column; padding: 25px 26px 21px;
+    text-decoration: none; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 16px; box-shadow: var(--shadow); overflow-wrap: anywhere;
+    transition: transform .18s, border-color .18s, box-shadow .18s;
+  }
+  .card:hover { transform: translateY(-3px); border-color: var(--accent-line); box-shadow: 0 12px 30px rgba(31, 48, 65, .08); }
+  .card-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+  .category { color: var(--accent); background: var(--accent-soft); padding: 4px 10px; border-radius: 6px; font-size: .72rem; font-weight: 600; }
+  .card-arrow { color: var(--muted); font-size: 1.15rem; line-height: 1; }
+  .card:hover .card-arrow { color: var(--accent); }
+  .card h3 { margin: 0 0 11px; font-size: 1.13rem; line-height: 1.55; font-weight: 700; letter-spacing: -.02em; }
+  .snip { margin: 0 0 21px; color: var(--muted); font-size: .85rem; line-height: 1.85; }
+  .card-bottom { margin-top: auto; padding-top: 15px; border-top: 1px solid var(--line); display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .keywords { display: flex; flex-wrap: wrap; gap: 6px; }
+  .kw { display: inline-block; padding: 3px 8px; border-radius: 5px; background: var(--soft); color: var(--muted); font-size: .7rem; line-height: 1.5; }
+  .card-date { color: var(--muted); font-size: .7rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  mark { background: var(--mark); color: var(--ink); border-radius: 3px; }
+  .empty { grid-column: 1 / -1; padding: 65px 24px; text-align: center; border: 1px dashed var(--line); border-radius: 16px; background: var(--surface); }
+  .empty-icon { display: grid; place-items: center; width: 52px; height: 52px; margin: 0 auto 16px; background: var(--accent-soft); color: var(--accent); border-radius: 16px; font-size: 1.5rem; }
+  .empty h3 { margin: 0 0 8px; font-size: 1.08rem; }
+  .empty p { margin: 0; color: var(--muted); font-size: .87rem; }
+  footer { padding: 32px 0; margin-top: 36px; border-top: 1px solid var(--line); color: var(--muted); font-size: .74rem; display: flex; justify-content: space-between; gap: 16px; }
+  noscript p { padding: 20px; border: 1px solid var(--accent-line); border-radius: 12px; background: var(--accent-soft); }
+  @media (max-width: 760px) {
+    .wrap { width: calc(100% - 36px); }
+    .nav { min-height: 68px; }
+    .hero { align-items: flex-start; flex-direction: column; padding: 34px 0 25px; gap: 25px; }
+    .hero-copy { font-size: .85rem; }
+    .overview { gap: 24px; }
+    .overview div + div { padding-left: 24px; }
+    .overview dd { font-size: 1.6rem; }
+    .search-panel { padding: 16px; border-radius: 14px; }
+    .search-controls { flex-direction: column; }
+    select { width: 100%; min-height: 46px; }
+    #results { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+    .card { padding: 21px; }
+    .results-toolbar { padding-top: 24px; }
+    .results-heading span { display: none; }
+    footer { flex-direction: column; gap: 6px; margin-top: 26px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; }
+    .card:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap nav">
+    <div class="brand"><span class="brand-icon" aria-hidden="true">QA</span>问答知识库</div>
+    <span class="local-badge">本地知识空间</span>
+  </div>
+</header>
+<main class="wrap">
+  <section class="hero" aria-labelledby="page-title">
+    <div>
+      <p class="eyebrow">沉淀问题 · 留住答案</p>
+      <h1 id="page-title">每个好问题，都值得收藏。</h1>
+      <p class="hero-copy">把零散的解答整理成知识，在需要的时候，轻松找回。</p>
+    </div>
+    <dl class="overview">
+      <div><dt>收录问答</dt><dd id="entry-count">—</dd></div>
+      <div><dt>主题分类</dt><dd id="category-count">—</dd></div>
+    </dl>
+  </section>
+  <section class="search-panel" aria-label="搜索知识库">
+    <div class="search-controls">
+      <div class="search-box">
+        <label class="sr-only" for="q">搜索问题、关键词或正文</label>
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>
+        <input id="q" type="search" placeholder="搜索问题、关键词或正文…" aria-describedby="search-help">
+      </div>
+      <label class="sr-only" for="cat">按分类筛选</label>
+      <select id="cat"><option value="">全部分类</option></select>
+    </div>
+    <p class="search-help" id="search-help">多个关键词用空格分隔，同时匹配 · 全文检索，无需联网</p>
+  </section>
+  <div class="results-toolbar">
+    <h2 class="results-heading">知识条目<span>按最近更新排序</span></h2>
+    <div class="results-status">
+      <span id="stats" role="status" aria-live="polite"></span>
+      <button id="reset" type="button" hidden>清除筛选</button>
+    </div>
+  </div>
+  <div id="results"></div>
+  <noscript><p>请启用浏览器 JavaScript 以查看条目和使用全文搜索。单篇问答 HTML 可直接打开阅读。</p></noscript>
+  <footer><span>QA 知识库 · 让解答成为积累</span><span>独立 HTML 文档 / 离线可用</span></footer>
+</main>
+
+<script>
+// 每次归档后由 qa-archive skill 整体重建:重新扫描全部条目文件,替换此数组。
+const ENTRIES = {{ENTRIES_JSON}};
+const SEARCH_ENTRIES = ENTRIES.map(e => ({
+  ...e,
+  searchText: (e.title + ' ' + e.category + ' ' + e.keywords.join(' ') + ' ' + e.text).toLowerCase()
+})).sort((a, b) => (b.updated_at || b.date).localeCompare(a.updated_at || a.date)
+  || a.path.localeCompare(b.path));
+
+const $q = document.getElementById('q');
+const $cat = document.getElementById('cat');
+const $res = document.getElementById('results');
+const $stats = document.getElementById('stats');
+const $reset = document.getElementById('reset');
+
+// 分类下拉
+const cats = [...new Set(ENTRIES.map(e => e.category))].sort();
+document.getElementById('entry-count').textContent = ENTRIES.length.toLocaleString();
+document.getElementById('category-count').textContent = cats.length.toLocaleString();
+cats.forEach(c => {
+  const o = document.createElement('option');
+  o.value = c; o.textContent = c;
+  $cat.appendChild(o);
+});
+
+function esc(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+}
+
+function snippet(text, terms, len) {
+  if (!text) return '';
+  let pos = -1;
+  for (const t of terms) {
+    pos = text.toLowerCase().indexOf(t);
+    if (pos >= 0) break;
+  }
+  if (pos < 0) pos = 0;
+  const start = Math.max(0, pos - Math.floor(len / 3));
+  let s = (start > 0 ? '…' : '') + text.slice(start, start + len) + (start + len < text.length ? '…' : '');
+  const ranges = [];
+  for (const t of terms) {
+    if (!t) continue;
+    const re = new RegExp(t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+    for (const match of s.matchAll(re)) {
+      ranges.push([match.index, match.index + match[0].length]);
+    }
+  }
+  ranges.sort((a, b) => a[0] - b[0] || b[1] - a[1]);
+  const merged = [];
+  for (const range of ranges) {
+    const last = merged[merged.length - 1];
+    if (last && range[0] <= last[1]) last[1] = Math.max(last[1], range[1]);
+    else merged.push(range);
+  }
+  let out = '';
+  let cursor = 0;
+  for (const [start, end] of merged) {
+    out += esc(s.slice(cursor, start)) + '<mark>' + esc(s.slice(start, end)) + '</mark>';
+    cursor = end;
+  }
+  return out + esc(s.slice(cursor));
+}
+
+function render() {
+  const terms = $q.value.toLowerCase().split(/\s+/).filter(Boolean);
+  const cat = $cat.value;
+
+  const list = SEARCH_ENTRIES.filter(e => {
+    if (cat && e.category !== cat) return false;
+    if (!terms.length) return true;
+    return terms.every(t => e.searchText.includes(t));
+  });
+
+  $stats.textContent = terms.length
+    ? `匹配 ${list.length} / ${ENTRIES.length} 条`
+    : (cat ? `${list.length} 条(分类:${cat})` : `共 ${ENTRIES.length} 条`);
+  $reset.hidden = !($q.value || cat);
+
+  if (!list.length) {
+    $res.innerHTML = '<div class="empty"><span class="empty-icon" aria-hidden="true">⌕</span>'
+      + '<h3>' + (ENTRIES.length ? '暂时没有找到匹配的内容' : '知识的积累，从一个问题开始') + '</h3>'
+      + '<p>' + (ENTRIES.length ? '试试更短的关键词，或清除分类筛选。' : '归档第一条问答后，它就会出现在这里。') + '</p></div>';
+    return;
+  }
+
+  $res.innerHTML = list.map(e => {
+    const kws = e.keywords.map(k => '<span class="kw">' + esc(k) + '</span>').join('');
+    const snip = snippet(e.text, terms, 120);
+    return '<a class="card" href="' + esc(e.path) + '">'
+      + '<div class="card-top"><span class="category">' + esc(e.category) + '</span>'
+      + '<span class="card-arrow" aria-hidden="true">↗</span></div>'
+      + '<h3>' + esc(e.title) + '</h3>'
+      + '<p class="snip">' + snip + '</p>'
+      + '<div class="card-bottom"><div class="keywords">' + kws + '</div>'
+      + '<span class="card-date">更新于 ' + esc(e.updated_at || e.date) + '</span></div>'
+      + '</a>';
+  }).join('');
+}
+
+$q.addEventListener('input', render);
+$cat.addEventListener('change', render);
+$reset.addEventListener('click', () => {
+  $q.value = '';
+  $cat.value = '';
+  render();
+  $q.focus();
+});
+render();
+</script>
+</body>
+</html>

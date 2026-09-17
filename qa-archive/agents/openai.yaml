@@ -1,0 +1,7 @@
+interface:
+  display_name: "QA 归档"
+  short_description: "把与 AI 的答疑归档成可检索的 HTML 知识库,支持全文检索与分类管理"
+  default_prompt: "Execute the user's explicit /qa-archive command: archive the selected complete Q&A, or only rebuild the index when requested. Use scripts/archive.py for writes and indexing; preserve the original content language and confirm unresolved scope or merge decisions."
+
+policy:
+  allow_implicit_invocation: false

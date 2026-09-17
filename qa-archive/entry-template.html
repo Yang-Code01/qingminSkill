@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="{{LANG}}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITLE}}</title>
+<meta name="qa-id" content="{{ID}}">
+<!-- qa-archive:entry -->
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f6f7f9; --surface: #fff; --soft: #f0f3f5; --ink: #202d3d;
+    --muted: #637084; --line: #e1e7ec; --accent: #126e66;
+    --accent-soft: #e9f4f0; --accent-line: #b9d9d1;
+    --code-bg: #1d2935; --code-ink: #e1eaf2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #11191f; --surface: #19232c; --soft: #202d38; --ink: #e6edf3;
+      --muted: #a3b2c2; --line: #2c3b47; --accent: #83d5c5;
+      --accent-soft: #203b38; --accent-line: #416b63;
+      --code-bg: #101920; --code-ink: #e1eaf2;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    line-height: 1.85; -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-underline-offset: 4px; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+  ::selection { background: var(--accent-line); color: var(--ink); }
+  .site-header { border-bottom: 1px solid var(--line); background: var(--surface); }
+  .nav { max-width: 960px; margin: auto; min-height: 80px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .brand { display: inline-flex; align-items: center; gap: 12px; color: var(--ink); font-size: 1rem; font-weight: 750; text-decoration: none; }
+  .brand-icon { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: var(--accent); color: var(--surface); font: 750 14px "Segoe UI", sans-serif; letter-spacing: -.04em; }
+  .nav-back { font-size: .8rem; text-decoration: none; white-space: nowrap; }
+  .nav-back:hover { text-decoration: underline; }
+  main { width: min(912px, calc(100% - 48px)); margin: 38px auto 0; }
+  article {
+    min-width: 0; padding: 45px 58px 52px; border: 1px solid var(--line); border-radius: 20px;
+    background: var(--surface); box-shadow: 0 8px 36px rgba(31, 48, 65, .04); overflow-wrap: anywhere;
+  }
+  .back { margin: 0 0 17px; color: var(--accent); font-size: .73rem; font-weight: 650; letter-spacing: .06em; }
+  .back a { text-decoration: none; }
+  .back a:hover { text-decoration: underline; }
+  h1 { margin: 0 0 24px; font-size: clamp(1.65rem, 3.2vw, 2.3rem); line-height: 1.45; letter-spacing: -.035em; font-weight: 750; text-wrap: balance; }
+  .meta { display: flex; flex-wrap: wrap; gap: 14px 28px; margin: 0 0 34px; padding: 0 0 26px; border-bottom: 1px solid var(--line); font-size: .75rem; }
+  .meta div { min-width: 0; }
+  .meta dt { color: var(--muted); font-size: .69rem; margin-bottom: 3px; }
+  .meta dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .meta .keyword-meta { flex-basis: 100%; }
+  .kw { display: inline-block; margin: 2px 5px 0 0; padding: 2px 9px; border-radius: 5px; background: var(--soft); color: var(--muted); font-size: .72rem; }
+  h2 { display: flex; align-items: center; gap: 10px; margin: 34px 0 19px; font-size: 1.13rem; font-weight: 750; letter-spacing: -.01em; }
+  .question-panel { padding: 21px 24px; margin-bottom: 30px; border: 1px solid var(--accent-line); border-radius: 12px; background: var(--accent-soft); }
+  .question-panel h2 { margin: 0 0 9px; color: var(--accent); font-size: .85rem; }
+  .question-panel h2::before { content: "Q"; font: 750 .85rem "Segoe UI", sans-serif; }
+  .answer-panel > h2::before { content: "A"; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; color: var(--accent); background: var(--accent-soft); font: 750 .85rem "Segoe UI", sans-serif; }
+  h3 { margin: 29px 0 12px; font-size: 1.03rem; }
+  h4 { margin: 24px 0 10px; font-size: .96rem; }
+  p { margin: 0 0 17px; }
+  [data-qa="question"] > :last-child, [data-qa="answer"] > :last-child { margin-bottom: 0; }
+  ul, ol { padding-left: 1.6rem; margin: 14px 0 21px; }
+  li { padding-left: .25rem; margin: 7px 0; }
+  li::marker { color: var(--accent); font-weight: 650; }
+  strong { font-weight: 700; }
+  pre {
+    max-width: 100%; overflow-x: auto; margin: 21px 0; padding: 23px 25px; border-radius: 12px;
+    color: var(--code-ink); background: var(--code-bg); border: 1px solid var(--line);
+    font-size: .85rem; line-height: 1.8; tab-size: 4; overflow-wrap: normal;
+  }
+  code { font-family: "Cascadia Code", Consolas, "SFMono-Regular", monospace; }
+  :not(pre) > code { padding: .15em .4em; border-radius: 4px; background: var(--soft); color: var(--accent); font-size: .88em; }
+  pre code { color: inherit; }
+  blockquote { margin: 22px 0; padding: 16px 22px; border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; background: var(--soft); color: var(--muted); }
+  blockquote > :last-child { margin-bottom: 0; }
+  table { display: block; max-width: 100%; width: 100%; overflow-x: auto; margin: 23px 0; border-collapse: collapse; font-size: .85rem; }
+  th, td { border: 1px solid var(--line); padding: 12px 16px; text-align: left; vertical-align: top; }
+  th { background: var(--soft); font-weight: 650; white-space: nowrap; }
+  tbody tr:nth-child(even) { background: var(--bg); }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 32px 0; }
+  details { margin: 20px 0; padding: 14px 18px; border: 1px solid var(--line); border-radius: 10px; }
+  summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+  details[open] summary { margin-bottom: 14px; }
+  .supplement { padding: 23px 25px; margin-top: 30px; border: 1px solid var(--accent-line); border-radius: 12px; background: var(--accent-soft); scroll-margin-top: 24px; }
+  .supplement h2 { color: var(--accent); margin: 0 0 16px; font-size: 1rem; }
+  .supplement > div > :last-child { margin-bottom: 0; }
+  aside.supplement { margin: 0 0 26px; font-size: .88rem; border-left: 4px solid var(--accent); }
+  footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 25px 4px 38px; color: var(--muted); font-size: .72rem; }
+  footer a { text-decoration: none; }
+  @media (max-width: 640px) {
+    .nav { min-height: 68px; padding-inline: 18px; }
+    main { width: calc(100% - 28px); margin-top: 20px; }
+    article { padding: 27px 21px 32px; border-radius: 15px; }
+    h1 { font-size: 1.65rem; }
+    .meta { gap: 12px 22px; margin-bottom: 25px; }
+    .question-panel, .supplement { padding: 17px; }
+    pre { padding: 18px; font-size: .78rem; }
+    th, td { padding: 10px 12px; }
+    body { font-size: .94rem; }
+  }
+  @media print {
+    :root { color-scheme: light; --surface: #fff; --ink: #000; --muted: #444; --line: #ccc; --accent: #164f47; --soft: #f3f3f3; --accent-soft: #f5f5f5; }
+    body { background: #fff; font-size: 11pt; }
+    .site-header, .back, footer { display: none; }
+    main { width: 100%; margin: 0; }
+    article { border: 0; border-radius: 0; box-shadow: none; padding: 0; }
+    h1, h2, h3, h4 { break-after: avoid; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; color: #000; background: #f3f3f3; }
+    table { display: table; font-size: 9pt; }
+  }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <nav class="nav" aria-label="知识库导航">
+    <a class="brand" href="{{INDEX_HREF}}"><span class="brand-icon" aria-hidden="true">QA</span>问答知识库</a>
+    <a class="nav-back" href="{{INDEX_HREF}}">← 全部条目</a>
+  </nav>
+</header>
+<main>
+<article>
+  <p class="back"><a href="{{INDEX_HREF}}">知识库</a> / 问答笔记</p>
+  <h1 data-qa="title">{{TITLE}}</h1>
+  <dl class="meta">
+    <div><dt>日期</dt><dd data-qa="created_at">{{DATE}}</dd></div>
+    <div><dt>更新</dt><dd data-qa="updated_at">{{DATE}}</dd></div>
+    <div><dt>分类</dt><dd data-qa="category">{{CATEGORY}}</dd></div>
+    <div><dt>来源</dt><dd>AI 答疑</dd></div>
+    <div class="keyword-meta"><dt>关键词</dt><dd data-qa="keywords">{{KEYWORDS_HTML}}</dd></div>
+  </dl>
+
+  <section class="question-panel">
+    <h2>问题</h2>
+    <div data-qa="question">{{QUESTION}}</div>
+  </section>
+
+  <section class="answer-panel">
+    <h2>答案</h2>
+    <div data-qa="answer">{{ANSWER}}</div>
+  </section>
+
+  {{SUPPLEMENTS}}
+</article>
+<footer><span>内容来自 AI 答疑，请结合适用条件判断。</span><a href="{{INDEX_HREF}}">返回知识库 ↑</a></footer>
+</main>
+</body>
+</html>
